@@ -1,8 +1,8 @@
 require('dotenv').config();
 
-const prot = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 const host = 'localhost';
-const express = require('express')
+const express = require('express');
 const app = express();
 
 const swaggerUI = require('swagger-ui-express');
@@ -10,18 +10,18 @@ const yamljs = require('yamljs');
 const swaggerDoc = yamljs.load('./docs/swagger.yaml');
 
 // const games = [
-//    { 
-//      GameID: 1,
-//        GameName: "Throne & Liberty", ReleaseDateEU: "01.10.2024", ReviewScore: 10 
-//    },
-//    { 
-//        GameID: 2, 
-//        GameName: "Goat Simulator", ReleaseDateEU: "01.04.2014", ReviewScore: 10 
-//    },
-//    { 
-//        GameID: 3, 
-//        GameName: "Team Fortress 2", ReleaseDateEU: "01.01.2007", ReviewScore: 10 
-//    } 
+//     { 
+//         GameID: 1,
+//         GameName: "Throne & Liberty", ReleaseDateEU: "01.10.2024", ReviewScore: 10 
+//     },
+//     { 
+//         GameID: 2, 
+//         GameName: "Goat Simulator", ReleaseDateEU: "01.04.2014", ReviewScore: 10 
+//     },
+//     { 
+//         GameID: 3, 
+//         GameName: "Team Fortress 2", ReleaseDateEU: "01.01.2007", ReviewScore: 10 
+//     } 
 // ]
 const users = [
     {
@@ -62,14 +62,14 @@ const users = [
     },
 ]
 
+
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 app.use(express.json());
 
-app.get("/games", async (req, res) => {
+app.get("/games", async (req, res) => { 
     const games = await db.games.findAll();
     res.send(games.map(({id, name}) => {return {id, name}}))
 })
-
 app.get("/games/:id", async (req, res) => {
     const game = await getGame(req, res);
     if (!game) { return};
@@ -86,14 +86,15 @@ app.post('/games', async (req, res) => {
     }
 
     let newGame = {
+        
         GameName: req.body.GameName,
         ReleaseDateEU: req.body.ReleaseDateEU,
         ReviewScore: req.body.ReviewScore
     }
     const createdGame = await db.games.create(newGame);
     res.status(201)
-        .location(`${getBaseURL(req)}/games/${games.length}`)
-        .send(game);
+        .location(`${getBaseURL(req)}/games/${createdGame.GameID}`)
+        .send(createdGame.GameID);
 })
 app.put('/games/:id', (req, res) => {
     if (req.params.id == null) {
@@ -215,12 +216,12 @@ function getBaseURL(req) {
     return req.connection && req.connection.encrypted ? "https" : "http" + `://${req.headers.host}`;
 }
 async function getGame(req, res) {
-    const idNumber = parseInt(req.param.GameID);
+    const idNumber = parseInt(req.params.GameID);
     if (isNaN(idNumber)) {
         res.status(400).send({error: "Invalid game ID"});
         return null;
-    } 
-    const game = await db.games.findByPk(idNumber)
+    }
+    const game = await db.games.findByPk(idNumber);
     if (!game) {
         res.status(404).send({error: "Game not found"});
         return null;

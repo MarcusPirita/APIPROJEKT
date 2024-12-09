@@ -9,7 +9,7 @@ const sequelize = new Sequelize(process.env.DB_DATANAME, process.env.DB_USERNAME
 (async () => {
     try {
         await sequelize.authenticate();
-        console.log("Connection has been established successfully.");
+        console.log("Connection has been established successfully.");        
     } catch (error) {
         console.error("Connection failed: " + error)
     }
@@ -18,11 +18,11 @@ const sequelize = new Sequelize(process.env.DB_DATANAME, process.env.DB_USERNAME
 const db = {}
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.games = require("./models/Game")(sequelize, DataTypes);
+db.games = require("./models/game")(sequelize, DataTypes);
 
 const sync = (async () => {
     await sequelize.sync({ alter: true});
     console.log("models have been synchronised successfully")
-})
+});
 
 module.exports = {db, sync};
