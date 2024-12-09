@@ -18,7 +18,7 @@ const sequelize = new Sequelize(process.env.DB_DATANAME, process.env.DB_USERNAME
 const db = {}
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.games = require("./models/game")(sequelize, DataTypes);
+db.games = require("./models/Game")(sequelize, DataTypes);
 
 const sync = (async () => {
     await sequelize.sync({ alter: true});
