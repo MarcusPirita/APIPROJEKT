@@ -1,0 +1,539 @@
+openapi: 3.0.2
+info:
+    title: BideoGamTARge23
+    version: 1.0.0
+    description: games api
+paths:
+    /games:
+        get:
+            tags:
+                - games
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of games:
+                                    value:
+                                        - Throne & Liberty
+                                        - Goat Simulator
+                                        - Team Fortress 2
+                    description: Returns a list of games
+            summary: get list of all games from api
+            description: Returns a list of all games in the API to the requesting user.
+        post:
+            requestBody:
+                description: Data of Game that the user wants to add
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Game'
+                        examples:
+                            Example of a game:
+                                value:
+                                    GameName: 'Elder scrolls 3: Morrowind'
+                                    ReleaseDateEU: 2001.01.02
+                                    ReviewScore: '8'
+                required: true
+            tags:
+                - games
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Game that is added:
+                                    value:
+                                        GameID: 4
+                                        GameName: 'Elder scrolls 3: Morrowind'
+                                        ReleaseDateEU: 2001.01.02
+                                        ReviewScore: '8'
+                    description: 'Return code 201 to user, if creation of new Game was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value:
+                                        -
+                                            error: One or multiple parameters missing
+                    description: 'Return status 400 to the user, if one or multiple of parameters are missing.'
+            summary: add new game
+            description: Adds a new game into the array
+    '/games/{id}':
+        get:
+            tags:
+                - games
+            parameters:
+                -
+                    examples:
+                        Example of id of Game:
+                            value: '1'
+                    name: id
+                    description: Id of Game the user has requested
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a game with details:
+                                    value:
+                                        GameID: 3
+                                        GameName: Team Fortress 2
+                                        ReleaseDateEU: 01.01.2007
+                                        ReviewScore: 10
+                    description: Returns details of a Game to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Invalid game id:
+                                    value:
+                                        -
+                                            error: Invalid id inserted
+                    description: Return status code 400 to the user if an invalid id was entered
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Game /w+ was not found:
+                                    value:
+                                        -
+                                            error: Game\w+ was not found in game array
+                    description: Return error 404 to the user if Game with this id is not found
+            operationId: id
+            summary: Get full details of a game
+            description: Returns full details of a given id game
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Game'
+                        examples:
+                            Example of a game:
+                                value:
+                                    GameID: 4
+                                    GameName: 'Elder scrolls 3: Morrowind'
+                                    ReleaseDateEU: 2001.01.02
+                                    ReviewScore: '8'
+                required: true
+            tags:
+                - games
+            parameters:
+                -
+                    examples:
+                        Id of game:
+                            value: '1'
+                    name: id
+                    description: Id of Game to be updated
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a modified Game:
+                                    value:
+                                        GameID: '2'
+                                        GameName: 'Elder scrolls 3: Morrowind'
+                                        ReleaseDateEU: 2001.01.02
+                                        ReviewScore: '8'
+                    description: Returns the modified Game to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value:
+                                        -
+                                            error: One or multiple parameters are missing
+                    description: User has not added required parameters to the modified Game
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing game:
+                                    value:
+                                        -
+                                            error: Game not found
+                    description: The Game to be updated is not found in the array
+            operationId: id
+            summary: Update a Game
+            description: 'Returns updated game, when modification of a game is successful'
+        delete:
+            requestBody:
+                description: id of game that is to be deleted
+                content:
+                    application/json:
+                        schema:
+                            type: integer
+                        examples:
+                            Id of Game to be deleted:
+                                value: '1'
+                required: true
+            tags:
+                - games
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                successful error:
+                                    value: |4-
+
+                                            {
+                                                "error": "no content"
+                                            }
+                    description: 'returned error, in case deletion was successful'
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Game /w+ was not found:
+                                    value: |4-
+
+                                            {
+                                                "error": "Game not found"
+                                            }
+                    description: Game with this id was not found
+            summary: Delete a specific gamed
+            description: Deletes a game from the array based on given id
+    /users:
+        get:
+            tags:
+                - users
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of users:
+                                    value:
+                                        -
+                                            ID: 1
+                                            Username: xXtittyslayer666Xx
+                                            Firstname: Mihkel
+                                            Lastname: Jaakson
+                                            Email: mihkel@example.com
+                                            SecureLevel: 0
+                                            LevelKey: 0-0
+                                        -
+                                            ID: 2
+                                            Username: BluePill
+                                            Firstname: Olle
+                                            Lastname: Õlle
+                                            Email: Olleolle@example.com
+                                            SecureLevel: 0
+                                            LevelKey: 0-1
+                                        -
+                                            ID: 2
+                                            Username: SuperMadis
+                                            Firstname: Mattias
+                                            Lastname: Moderaator
+                                            Email: suma@example.com
+                                            SecureLevel: 0
+                                            LevelKey: 1-0
+                                        -
+                                            ID: 3
+                                            Username: Admin
+                                            Firstname: Admin
+                                            Lastname: istraator
+                                            Email: Olleolle@example.com
+                                            SecureLevel: 1
+                                            LevelKey: 0-0
+                    description: sends all users to requester
+            description: Retreives all users from the array
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+                        examples:
+                            Example of a user to be added:
+                                value:
+                                    Username: sippi
+                                    Firstname: sonic
+                                    Lastname: edgehog
+                                    Email: test@gmail.com
+                                    SecureLevel: '0'
+                                    LevelKey: 0-0
+                required: true
+            tags:
+                - users
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Game'
+                            examples:
+                                Example of added User:
+                                    value:
+                                        ID: 5
+                                        Username: sippi
+                                        Firstname: sonic
+                                        Lastname: edgehog
+                                        Email: test@gmail.com
+                                        SecureLevel: '0'
+                                        LevelKey: 0-0
+                    description: |
+                        User was added
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                User is missing parameters:
+                                    value:
+                                        -
+                                            error: One or multiple parameters are missing
+                    description: 'When user is missing a parameter, respond with this'
+            summary: Add new User
+            description: New user to be added into the array
+    '/users/{id}':
+        get:
+            tags:
+                - users
+            parameters:
+                -
+                    examples:
+                        Example of id of User:
+                            value: '1'
+                    name: id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                            examples:
+                                Example of a user:
+                                    value:
+                                        ID: 1
+                                        Username: xXtittyslayer666Xx
+                                        Firstname: Mihkel
+                                        Lastname: Jaakson
+                                        Email: mihkel@example.com
+                                        SecureLevel: 0
+                                        LevelKey: 0-0
+                    description: User is found by the given id
+            summary: Get one user
+            description: Retreives a single user with its details from the array
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+                        examples:
+                            Example of user:
+                                value:
+                                    -
+                                        ID: 7
+                                        Username: ''
+                                        Firstname: qae8sr
+                                        Lastname: jo3
+                                        Email: v9uirq
+                                        SecureLevel: 81
+                                        LevelKey: ''
+                required: true
+            tags:
+                - users
+            parameters:
+                -
+                    examples:
+                        Example of id of User:
+                            value: '1'
+                    name: id
+                    description: |
+                        id of user to be modified
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                            examples:
+                                Example of a user:
+                                    value:
+                                        -
+                                            ID: 98
+                                            Username: ''
+                                            Firstname: ''
+                                            Lastname: y0c
+                                            Email: f
+                                            SecureLevel: 94
+                                            LevelKey: 12e
+                    description: User has been successfully modified
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value:
+                                        -
+                                            error: One or multiple parameters missing
+                    description: User to be modififed is missing parameters
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                User /w+ was not found:
+                                    value:
+                                        -
+                                            error: User not found
+                    description: User with this id was not found
+            summary: successful
+            description: modification of user has been successful
+        delete:
+            tags:
+                - users
+            parameters:
+                -
+                    examples:
+                        Id of user to be deleted:
+                            value: '1'
+                    name: id
+                    description: Id of user to be deleted
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Example of deleted user:
+                                    value:
+                                        -
+                                            error: No Content
+                    description: Deletion was successful
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                User /w+ was not found:
+                                    value:
+                                        -
+                                            error: user not found
+                    description: User with this id was not found
+            summary: id of game to be deleted
+            description: |
+                User deletion from array
+components:
+    schemas:
+        error:
+            title: Root Type for error
+            description: ''
+            type: object
+            properties:
+                error:
+                    type: string
+            example:
+                error: Error message.
+        Game:
+            title: Root Type for Game
+            description: Example of a valid Game
+            type: object
+            properties:
+                GameName:
+                    type: string
+                ReleaseDateEU:
+                    format: date
+                    type: string
+                ReviewScore:
+                    type: string
+            example:
+                GameName: 'Elder scrolls 3: Morrowind'
+                ReleaseDateEU: 2001.01.02
+                ReviewScore: '8'
+        User:
+            title: Root Type for User
+            description: Example of complete retreived user
+            type: object
+            properties:
+                ID:
+                    format: int32
+                    type: integer
+                Username:
+                    type: string
+                Firstname:
+                    type: string
+                Lastname:
+                    type: string
+                Email:
+                    type: string
+                SecureLevel:
+                    format: int32
+                    type: integer
+                LevelKey:
+                    type: string
+            example:
+                ID: 1
+                Username: xXtittyslayer666Xx
+                Firstname: Mihkel
+                Lastname: Jaakson
+                Email: mihkel@example.com
+                SecureLevel: 0
+                LevelKey: 0-0
